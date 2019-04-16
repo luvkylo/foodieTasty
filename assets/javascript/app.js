@@ -101,14 +101,15 @@ $(document).ready(function() {
 		event.preventDefault();
 		zip = $(".zipSearch").val();
 		if (zip.match("[0-9]{5}")) {
-			var GCPapi_key = "AIzaSyCy1z_XBLshu_jzKjrNYmfw55qps1wCOX8";
-			var googleUrl = "https://maps.googleapis.com/maps/api/geocode/json?address= " + zip + "&key=" + GCPapi_key;
+			var mapApi_key = "7KJ9FmGzVmFgAQMe0JY1nsua5PG7EUul";
+			var googleUrl = "http://www.mapquestapi.com/geocoding/v1/address?key=" + mapApi_key + "&location=" + zip;
 			$.ajax({
 				url: googleUrl,
 				method: "GET",
 			}).then(function(response) {
-				lat = response.results[0].geometry.location.lat;
-				long = response.results[0].geometry.location.lng;
+				console.log(response);
+				lat = response.results[0].locations[0].latLng.lat;
+				long = response.results[0].locations[0].latLng.lng;
 				if (cate != "") {
 					var url = searchURL + "?term=" + cate + "&latitude=" + lat + "&longitude=" + long + "&sort_by=rating&limit=10&offset=" + limit + "&radius=4000";
 				}
