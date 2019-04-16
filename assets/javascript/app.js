@@ -174,6 +174,7 @@ $(document).ready(function() {
 				});
 			});
 		}
+		$(".zipSearch").val();
 	});
 
 	// search food type
