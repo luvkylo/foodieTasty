@@ -283,7 +283,7 @@ $(document).ready(function() {
 								var rate = response.rating + "/5";
 								var price = response.price;
 								var yelp_url = response.url;
-								var location = response.location.location.display_address[0]
+								var location = response.location.display_address[0]
 
 								if (price === "$") {
 									price = "Cheap!";
