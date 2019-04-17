@@ -35,7 +35,7 @@ function build(response, num) {
 	console.log(response)
 	for (var i = 0; i < num; i++) {
 		if (response.businesses.length === 0) {
-			$(".main-display").append($("<h1 warning>").addClass("text-center").css("color", "red").text("Result cannot be found!"));
+			$(".main-display").append($("<h1>").addClass("text-center warning").css("color", "red").text("Result cannot be found!"));
 			break;
 		}
 		else if (response.businesses[i] === "undefined") {
@@ -258,7 +258,7 @@ $(document).ready(function() {
 			$(".cardGroup").empty();
 			var pairs = document.cookie.split(";");
 			if (pairs[0] === "") {
-				$(".main-display").append($("<h1 warning>").addClass("text-center").css("color", "red").text("You do not have any item favorited!"));
+				$(".main-display").append($("<h1>").addClass("text-center warning").css("color", "red").text("You do not have any item favorited!"));
 			}
 			else {
 				if ($(".cardGroup").length === 1) {
