@@ -153,10 +153,15 @@ $(document).ready(function() {
 		if (zip.match("[0-9]{5}")) {
 			var mapApi_key = "7KJ9FmGzVmFgAQMe0JY1nsua5PG7EUul";
 			var googleUrl = "http://www.mapquestapi.com/geocoding/v1/address?key=" + mapApi_key + "&location=" + zip;
-			$.ajax({
-				url: googleUrl,
-				method: "GET",
-			}).then(function(response) {
+			
+			function ajaxcall() {
+				return $.ajax({
+					url: googleUrl,
+					method: "GET",
+				});
+			}
+
+			$.when(ajaxcall()).done(function(response) {
 				lat = response.results[0].locations[0].latLng.lat;
 				long = response.results[0].locations[0].latLng.lng;
 				if (cate != "") {
