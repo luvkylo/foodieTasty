@@ -32,7 +32,6 @@ function findCookies() {
 
 function build(response, num) {
 	findCookies()
-	console.log(response)
 	for (var i = 0; i < num; i++) {
 		if (response.businesses.length === 0) {
 			$(".main-display").append($("<h1>").addClass("text-center warning").css("color", "red").text("Result cannot be found!"));
@@ -128,7 +127,6 @@ $(document).ready(function() {
 	// row till end -> get again
 	$(window).scroll(function() {
 		if($(window).scrollTop() + $(window).height() >= $(document).height()-2 && !infav) {
-			console.log("in");
 			var url = searchURL + "?term=" + cate + "&latitude=" + lat + "&longitude=" + long + "&sort_by=rating&limit=10&offset=" + limit + "&radius=40000";
 			$.ajax({
 				url: url,
@@ -243,6 +241,9 @@ $(document).ready(function() {
 			date.setTime(date.getTime()+(-1*24*60*60*1000));
 			document.cookie = id + "= ; expires=" + date.toGMTString();
 			$(this).removeClass("btn-primary").addClass("btn-outline-primary").text("Favorite");
+			if (infav) {
+				$(this).parent().parent().remove();
+			}
 		}
 		else {
 			document.cookie = id + "=" + id;
@@ -267,7 +268,6 @@ $(document).ready(function() {
 						setTimeout(function () {
 						    var pair = item.split("=");
 						    var cate = $.trim(pair[0]);
-						    console.log(cate);
 						    var url = "https://corsanywhere.herokuapp.com/https://api.yelp.com/v3/businesses/" + cate;
 							$.ajax({
 								url: url,
@@ -276,7 +276,6 @@ $(document).ready(function() {
 									'Authorization': 'Bearer ' + token
 								}
 							}).then(function(response) {
-								console.log(response);
 								findCookies()
 								var body = $("<div>").addClass("card mb-4").width("22rem").css("min-width", "15rem");
 								var image_url = response.image_url;
