@@ -20,12 +20,10 @@ function findCookies() {
 	var pairs = document.cookie.split(";");
 		for (var i=0; i<pairs.length; i++){
 		    var pair = pairs[i].split("=");
-	    	pair[0] = pair[0].charAt(0).replace(/\s+/g, '') + pair[0].slice(1);
-		    if (!favArr.includes(pair[0])) {	
-			    favArr.push(pair[0]);
+		    if (!favArr.includes(pair[1])) {	
+			    favArr.push($.trim(pair[1]));
 		    }
 		}
-    console.log(favArr)
 }
 
 function build(response, num) {
@@ -45,6 +43,7 @@ function build(response, num) {
 			var rate = response.businesses[i].rating + "/5";
 			var price = response.businesses[i].price;
 			var yelp_url = response.businesses[i].url;
+
 			if (price === "$") {
 				price = "Cheap!";
 				var color = "green";
@@ -63,10 +62,10 @@ function build(response, num) {
 			body.append(yelp);
 			var text = $("<p>").addClass("card-text").html("<p>Name: <b>" + name + "</b></p><p>Rate: <b>" + rate + "</b></p><p>Price: <b style='color: " + color + "'>" + price + "</b></p>");
 			if (!favArr.includes(name)) {
-				var fav = $("<button>").addClass("btn btn-outline-primary favButton").attr("type", "button").text("Favorite").data("name", name);
+				var fav = $("<button>").addClass("btn btn-outline-primary favButton").attr("type", "button").text("Favorite").data("name", response.businesses[i].id);
 			}
 			else {
-				var fav = $("<button>").addClass("btn btn-primary favButton").attr("type", "button").text("Favorited!").data("name", name);
+				var fav = $("<button>").addClass("btn btn-primary favButton").attr("type", "button").text("Favorited!").data("name", response.businesses[i].id);
 			}
 			body.append($("<div>").addClass("card-body").append([text, fav]));
 			$(".cardGroup").append(body);
@@ -231,15 +230,15 @@ $(document).ready(function() {
 
 	// add a favorite button?
 	$(document).on("click", ".favButton", function() {
-		name = $(this).data("name");
+		id = $(this).data("name");
 		if ($(this).text() === "Favorited!") {
 			var date = new Date();
 			date.setTime(date.getTime()+(-1*24*60*60*1000));
-			document.cookie = name + "= ; expires=" + date.toGMTString();
+			document.cookie = id + "= ; expires=" + date.toGMTString();
 			$(this).removeClass("btn-primary").addClass("btn-outline-primary").text("Favorite");
 		}
 		else {
-			document.cookie = name + "=" + name;
+			document.cookie = id + "=" + id;
 			$(this).removeClass("btn-outline-primary").addClass("btn-primary").text("Favorited!");
 		}
 	});
@@ -257,22 +256,56 @@ $(document).ready(function() {
 			}
 			else {
 				if ($(".cardGroup").length === 1) {
-					console.log("in");
 					pairs.forEach(function(item, i){
-					    var pair = item.split("=");
-					    var cate = pair[0];
-					    limit = 0;
-					    var url = searchURL + "?term=" + cate + "&latitude=" + lat + "&longitude=" + long + "&sort_by=rating&limit=1&offset=" + limit + "&radius=40000";
-					    console.log(url);
-						$.ajax({
-							url: url,
-							method: "GET",
-							headers: {
-								'Authorization': 'Bearer ' + token
-							}
-						}).then(function(response) {
-							build(response, 1);
-						});
+						setTimeout(function () {
+						    var pair = item.split("=");
+						    var cate = $.trim(pair[0]);
+						    console.log(cate);
+						    var url = "https://corsanywhere.herokuapp.com/https://api.yelp.com/v3/businesses/" + cate;
+							$.ajax({
+								url: url,
+								method: "GET",
+								headers: {
+									'Authorization': 'Bearer ' + token
+								}
+							}).then(function(response) {
+								console.log(response);
+								findCookies()
+								var body = $("<div>").addClass("card mb-4").width("22rem").css("min-width", "15rem");
+								var image_url = response.image_url;
+								var name = response.name;
+								var rate = response.rating + "/5";
+								var price = response.price;
+								var yelp_url = response.url;
+
+								if (price === "$") {
+									price = "Cheap!";
+									var color = "green";
+								} else if (price === "$$") {
+									price = "Affordable";
+									var color = "blue";
+								} else if (price === "$$$") {
+									price = "Getting Expensive!";
+									var color = "#CCCC00";
+								} else {
+									price = "Goodbye Wallet";
+									var color = "red";
+								}
+								var yelp = $("<a>").attr({href: yelp_url, target: "_blank"});
+								yelp.append($("<img>").addClass("card-img-top img-flui").attr("src", image_url));
+								body.append(yelp);
+								var text = $("<p>").addClass("card-text").html("<p>Name: <b>" + name + "</b></p><p>Rate: <b>" + rate + "</b></p><p>Price: <b style='color: " + color + "'>" + price + "</b></p>");
+								if (!favArr.includes(response.id)) {
+									var fav = $("<button>").addClass("btn btn-outline-primary favButton").attr("type", "button").text("Favorite").data("name", response.id);
+								}
+								else {
+									var fav = $("<button>").addClass("btn btn-primary favButton").attr("type", "button").text("Favorited!").data("name", response.id);
+								}
+								body.append($("<div>").addClass("card-body").append([text, fav]));
+								$(".cardGroup").append(body);
+								exist = true;
+							});
+						}, 200*i);
 					});
 				}
 			}
