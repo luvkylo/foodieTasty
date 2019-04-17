@@ -10,10 +10,14 @@ var searchURL = "https://corsanywhere.herokuapp.com/https://api.yelp.com/v3/busi
 var token = 'YmNs5xVWc1AmBIRel6tpbxEpxy2zsRkWoIrEiojv2vvW2Jld3YIc7KCAWHBKd_FpcjqyjYKesjEK8SfclMEswwThz0zvZ_yxJZlYkU7p_TkpynXA1xcNkme9Mse0XHYx';
 var exist = false;
 var limit = 0;
+var userlat = 34.0752215;
+var userlang = -118.44149050000001;
 
 navigator.geolocation.getCurrentPosition(function(position) {
 	lat = position.coords.latitude;
 	long = position.coords.longitude;
+	userlat = position.coords.latitude;
+	userlong = position.coords.longitude;
 });
 
 function findCookies() {
@@ -28,8 +32,9 @@ function findCookies() {
 
 function build(response, num) {
 	findCookies()
+	console.log(response)
 	for (var i = 0; i < num; i++) {
-		if (response.businesses[0] === "undefined") {
+		if (response.businesses.length === 0) {
 			$(".main-display").append($("<h1 warning>").addClass("text-center").css("color", "red").text("Result cannot be found!"));
 			break;
 		}
@@ -43,6 +48,7 @@ function build(response, num) {
 			var rate = response.businesses[i].rating + "/5";
 			var price = response.businesses[i].price;
 			var yelp_url = response.businesses[i].url;
+			var location = response.businesses[i].location.display_address[0]
 
 			if (price === "$") {
 				price = "Cheap!";
@@ -60,7 +66,7 @@ function build(response, num) {
 			var yelp = $("<a>").attr({href: yelp_url, target: "_blank"});
 			yelp.append($("<img>").addClass("card-img-top img-flui").attr("src", image_url));
 			body.append(yelp);
-			var text = $("<p>").addClass("card-text").html("<p>Name: <b>" + name + "</b></p><p>Rate: <b>" + rate + "</b></p><p>Price: <b style='color: " + color + "'>" + price + "</b></p>");
+			var text = $("<p>").addClass("card-text").html("<p>Name: <b>" + name + "</b></p><p>Rate: <b>" + rate + "</b></p><p>Location: <b>" + location + "</b></p><p>Price: <b style='color: " + color + "'>" + price + "</b></p>");
 			if (!favArr.includes(name)) {
 				var fav = $("<button>").addClass("btn btn-outline-primary favButton").attr("type", "button").text("Favorite").data("name", response.businesses[i].id);
 			}
@@ -121,7 +127,8 @@ $(document).ready(function() {
 
 	// row till end -> get again
 	$(window).scroll(function() {
-		if($(window).scrollTop() + $(window).height() == $(document).height() && !infav) {
+		if($(window).scrollTop() + $(window).height() >= $(document).height()-2 && !infav) {
+			console.log("in");
 			var url = searchURL + "?term=" + cate + "&latitude=" + lat + "&longitude=" + long + "&sort_by=rating&limit=10&offset=" + limit + "&radius=40000";
 			$.ajax({
 				url: url,
@@ -180,7 +187,6 @@ $(document).ready(function() {
 				});
 			});
 		}
-		$(".zipSearch").val();
 	});
 
 	// search food type
@@ -226,7 +232,7 @@ $(document).ready(function() {
 			}
 		});
 		$(".styleSearch").val("");
-	})
+	});
 
 	// add a favorite button?
 	$(document).on("click", ".favButton", function() {
@@ -277,6 +283,7 @@ $(document).ready(function() {
 								var rate = response.rating + "/5";
 								var price = response.price;
 								var yelp_url = response.url;
+								var location = response.location.location.display_address[0]
 
 								if (price === "$") {
 									price = "Cheap!";
@@ -294,7 +301,7 @@ $(document).ready(function() {
 								var yelp = $("<a>").attr({href: yelp_url, target: "_blank"});
 								yelp.append($("<img>").addClass("card-img-top img-flui").attr("src", image_url));
 								body.append(yelp);
-								var text = $("<p>").addClass("card-text").html("<p>Name: <b>" + name + "</b></p><p>Rate: <b>" + rate + "</b></p><p>Price: <b style='color: " + color + "'>" + price + "</b></p>");
+								var text = $("<p>").addClass("card-text").html("<p>Name: <b>" + name + "</b></p><p>Rate: <b>" + rate + "</b></p><p>Location: <b>" + location + "</b></p><p>Price: <b style='color: " + color + "'>" + price + "</b></p>");
 								if (!favArr.includes(response.id)) {
 									var fav = $("<button>").addClass("btn btn-outline-primary favButton").attr("type", "button").text("Favorite").data("name", response.id);
 								}
@@ -311,5 +318,29 @@ $(document).ready(function() {
 			}
 			end = true;
 		}
+	});
+
+	$(".clear").on("click", function() {
+		$(".zipSearch").val("");
+		lat = userlat;
+		long = userlong;
+		var url = searchURL + "?term=" + cate + "&latitude=" + lat + "&longitude=" + long + "&sort_by=rating&limit=10&offset=" + limit + "&radius=40000";
+		$.ajax({
+			url: url,
+			method: "GET",
+			headers: {
+				'Authorization': 'Bearer ' + token
+			}
+		}).then(function(response) {
+			if ($(".cardGroup").length === 1) {
+				if (exist) {
+					$(".cardGroup").empty();
+					build(response, 10);
+				}
+				else {
+					build(response, 10);
+				}
+			}
+		});
 	});
 });
