@@ -32,7 +32,7 @@ function build(response, num) {
 	findCookies()
 	for (var i = 0; i < num; i++) {
 		if (response.businesses[0] === "undefined") {
-			$(".cardGroup").removeClass("card-columns").addClass("text-center").css("color", "red").text("Result cannot be found!");
+			$(".main-display").append($("<h1 warning>").addClass("text-center").css("color", "red").text("Result cannot be found!"));
 			break;
 		}
 		else if (response.businesses[i] === "undefined") {
@@ -84,6 +84,9 @@ $(document).ready(function() {
 
 
 	$(document).on("click", ".categoriesButton", function() {
+		if ($(".warning").length === 1) {
+			$(".warning").remove()
+		}
 		limit = 0;
 		infav = false;
 		end = false;
@@ -105,15 +108,15 @@ $(document).ready(function() {
 				'Authorization': 'Bearer ' + token
 			}
 		}).then(function(response) {
-			$(".main-display").append($("<div>").addClass("card-columns cardGroup").css("display", "block"));
-			if (exist) {
-				$(".cardGroup").empty();
-				build(response, 10);
+			if ($(".cardGroup").length === 1) {
+				if (exist) {
+					$(".cardGroup").empty();
+					build(response, 10);
+				}
+				else {
+					build(response, 10);
+				}
 			}
-			else {
-				build(response, 10);
-			}
-			
 		});
 	});
 
@@ -136,6 +139,9 @@ $(document).ready(function() {
 	// connect zip code button
 		// use another api to find long and lat
 	$("#zipSearch").on("click", function(event) {
+		if ($(".warning").length === 1) {
+			$(".warning").remove()
+		}
 		infav = false;
 		end = false;
 		event.preventDefault();
@@ -163,13 +169,14 @@ $(document).ready(function() {
 						'Authorization': 'Bearer ' + token
 					}
 				}).then(function(response) {
-					$(".main-display").append($("<div>").addClass("card-columns cardGroup").css("display", "block"));
-					if (exist) {
-						$(".cardGroup").empty();
-						build(response, 10);
-					}
-					else {
-						build(response, 10);
+					if ($(".cardGroup").length === 1) {
+						if (exist) {
+							$(".cardGroup").empty();
+							build(response, 10);
+						}
+						else {
+							build(response, 10);
+						}
 					}
 				});
 			});
@@ -180,6 +187,9 @@ $(document).ready(function() {
 	// search food type
 		// use term
 	$("#styleSearch").on("click", function(event) {
+		if ($(".warning").length === 1) {
+			$(".warning").remove()
+		}
 		infav = false;
 		end = false;
 		event.preventDefault();
@@ -206,15 +216,15 @@ $(document).ready(function() {
 				'Authorization': 'Bearer ' + token
 			}
 		}).then(function(response) {
-			$(".main-display").append($("<div>").addClass("card-columns cardGroup").css("display", "block"));
-			if (exist) {
-				$(".cardGroup").empty();
-				build(response, 10);
+			if ($(".cardGroup").length === 1) {
+				if (exist) {
+					$(".cardGroup").empty();
+					build(response, 10);
+				}
+				else {
+					build(response, 10);
+				}
 			}
-			else {
-				build(response, 10);
-			}
-			
 		});
 		$(".styleSearch").val("");
 	})
@@ -235,16 +245,18 @@ $(document).ready(function() {
 	});
 
 	$(".fav").on("click", function() {
+		if ($(".warning").length === 1) {
+			$(".warning").remove()
+		}
 		infav = true;
 		if (!end) {
-			$(".main-display").empty();
+			$(".cardGroup").empty();
 			var pairs = document.cookie.split(";");
 			if (pairs[0] === "") {
-				$(".main-display").append($("<h1>").addClass("text-center").css("color", "red").text("You do not have any item favorited!"));
+				$(".main-display").append($("<h1 warning>").addClass("text-center").css("color", "red").text("You do not have any item favorited!"));
 			}
 			else {
-				if ($(".cardGroup").length === 0) {
-					$(".main-display").append($("<div>").addClass("card-columns cardGroup").css("display", "block"));
+				if ($(".cardGroup").length === 1) {
 					console.log("in");
 					pairs.forEach(function(item, i){
 					    var pair = item.split("=");
