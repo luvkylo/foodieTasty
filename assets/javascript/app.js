@@ -167,24 +167,25 @@ $(document).ready(function() {
 				else {
 					var url = searchURL + "?latitude=" + lat + "&longitude=" + long + "&sort_by=rating&limit=10&offset=" + limit + "&radius=4000";
 				}
-
-				$.ajax({
-					url: url,
-					method: "GET",
-					headers: {
-						'Authorization': 'Bearer ' + token
-					}
-				}).then(function(response) {
-					if ($(".cardGroup").length === 1) {
-						if (exist) {
-							$(".cardGroup").empty();
-							build(response, 10);
+				setTimeout(function () {
+					$.ajax({
+						url: url,
+						method: "GET",
+						headers: {
+							'Authorization': 'Bearer ' + token
 						}
-						else {
-							build(response, 10);
+					}).then(function(response) {
+						if ($(".cardGroup").length === 1) {
+							if (exist) {
+								$(".cardGroup").empty();
+								build(response, 10);
+							}
+							else {
+								build(response, 10);
+							}
 						}
-					}
-				});
+					});
+				}, 300);
 			});
 		}
 	});
