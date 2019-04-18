@@ -152,7 +152,7 @@ $(document).ready(function() {
 		zip = $(".zipSearch").val();
 		if (zip.match("[0-9]{5}")) {
 			var mapApi_key = "7KJ9FmGzVmFgAQMe0JY1nsua5PG7EUul";
-			var googleUrl = "http://www.mapquestapi.com/geocoding/v1/address?key=" + mapApi_key + "&location=" + zip;
+			var googleUrl = "https://www.mapquestapi.com/geocoding/v1/address?key=" + mapApi_key + "&location=" + zip;
 			
 			function ajaxcall() {
 				return $.ajax({
