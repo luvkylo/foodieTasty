@@ -32,6 +32,8 @@ function findCookies() {
 
 function build(response, num) {
 	findCookies()
+	console.log(lat);
+	console.log(long);
 	for (var i = 0; i < num; i++) {
 		if (response.businesses.length === 0) {
 			$(".cardGroup").append($("<h1>").addClass("text-center warning").css("color", "red").text("Result cannot be found!"));
@@ -65,7 +67,7 @@ function build(response, num) {
 			var yelp = $("<a>").attr({href: yelp_url, target: "_blank"});
 			yelp.append($("<img>").addClass("card-img-top img-flui").attr("src", image_url));
 			body.append(yelp);
-			var text = $("<p>").addClass("card-text").html("<p>Name: <b>" + name + "</b></p><p>Rate: <b>" + rate + "</b></p><p>Location: <b>" + location + "</b></p><p>Price: <b style='color: " + color + "'>" + price + "</b></p>");
+			var text = $("<p>").addClass("card-text").html("<p>Name: <b>" + name + "</b></p><p>Rating: <b>" + rate + "</b></p><p>Location: <b>" + location + "</b></p><p>Price: <b style='color: " + color + "'>" + price + "</b></p>");
 			if (!favArr.includes(name)) {
 				var fav = $("<button>").addClass("btn btn-outline-primary favButton").attr("type", "button").text("Favorite").data("name", response.businesses[i].id);
 			}
@@ -164,6 +166,8 @@ $(document).ready(function() {
 			$.when(ajaxcall()).done(function(response) {
 				lat = response.results[0].locations[0].latLng.lat;
 				long = response.results[0].locations[0].latLng.lng;
+				console.log(lat);
+				console.log(long);
 				if (cate != "") {
 					var url = searchURL + "?term=" + cate + "&latitude=" + lat + "&longitude=" + long + "&sort_by=rating&limit=10&offset=" + limit + "&radius=4000";
 				}
@@ -306,7 +310,7 @@ $(document).ready(function() {
 								var yelp = $("<a>").attr({href: yelp_url, target: "_blank"});
 								yelp.append($("<img>").addClass("card-img-top img-flui").attr("src", image_url));
 								body.append(yelp);
-								var text = $("<p>").addClass("card-text").html("<p>Name: <b>" + name + "</b></p><p>Rate: <b>" + rate + "</b></p><p>Location: <b>" + location + "</b></p><p>Price: <b style='color: " + color + "'>" + price + "</b></p>");
+								var text = $("<p>").addClass("card-text").html("<p>Name: <b>" + name + "</b></p><p>Rating: <b>" + rate + "</b></p><p>Location: <b>" + location + "</b></p><p>Price: <b style='color: " + color + "'>" + price + "</b></p>");
 								if (!favArr.includes(response.id)) {
 									var fav = $("<button>").addClass("btn btn-outline-primary favButton").attr("type", "button").text("Favorite").data("name", response.id);
 								}
