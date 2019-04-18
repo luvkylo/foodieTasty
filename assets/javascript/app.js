@@ -34,7 +34,7 @@ function build(response, num) {
 	findCookies()
 	for (var i = 0; i < num; i++) {
 		if (response.businesses.length === 0) {
-			$(".main-display").append($("<h1>").addClass("text-center warning").css("color", "red").text("Result cannot be found!"));
+			$(".cardGroup").append($("<h1>").addClass("text-center warning").css("color", "red").text("Result cannot be found!"));
 			break;
 		}
 		else if (response.businesses[i] === "undefined") {
