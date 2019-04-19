@@ -4,9 +4,9 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Foodie Tasty!</title>
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-	<link rel="stylesheet" type="text/css" media="screen" href="assets/css/style.css">
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" media="screen" href="assets/css/style.css" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script type="text/javascript" src="assets/javascript/app.js"></script>
 </head>
 <body>
@@ -30,29 +30,18 @@
 						<h5 class="card-title">Search</h5>
 						<div class="input-group mb-3">
 							<form class="w-100">
-								<div class="form-row justify-content-between">
-									<div class="col-12 col-lg-6 mb-2 mb-lg-0">	
-										<div class="row">
-											<div class="col-9">
-												<input type="text" class="form-control zipSearch" placeholder="Your Zipcode" aria-label="Your Zipcode" aria-describedby="zipSearch" pattern="[0-9]{5}" title="Please enter valid zip code" required="required">
-											</div>
-											<div class="col-1">
-												<button class="btn btn-outline-secondary" type="submit" id="zipSearch">Search</button>
-											</div>
-										</div>
+								<div class="form-row justify-content-start">
+									<div class="col-12 col-lg-5 mb-2">
+										<input type="text" class="form-control zipSearch" placeholder="Your Zipcode" aria-label="Your Zipcode" aria-describedby="zipSearch" pattern="[0-9]{5}" title="Please enter valid zip code">
 									</div>
-									<div class="col-12 col-lg-6 mb-2 mb-lg-0">
-										<div class="row">
-											<div class="col-8">
-												<input type="text" class="form-control styleSearch" placeholder="Food Style" aria-label="Food Style" aria-describedby="styleSearch">
-											</div>
-											<div class="col-2">
-												<button class="btn btn-outline-secondary" type="submit" id="styleSearch">Search</button>
-											</div>
-											<div class="col-2">
-												<button class="btn btn-outline-secondary clear" type="button">Reset</button>
-											</div>
-										</div>
+									<div class="col-12 col-lg-5 mb-2">
+										<input type="text" class="form-control styleSearch" placeholder="Food Style" aria-label="Food Style" aria-describedby="styleSearch">
+									</div>
+									<div class="col-1 col-lg-1 mb-2">
+										<button class="btn btn-outline-secondary" type="submit" id="styleSearch">Search</button>
+									</div>
+									<div class="col-6 col-md-3 col-sm-4 col-lg-1 mb-2">
+										<button class="btn btn-outline-secondary clear" type="button">Reset</button>
 									</div>
 								</div>
 							</form>

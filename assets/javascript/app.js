@@ -34,6 +34,9 @@ function build(response, num) {
 	findCookies()
 	console.log(lat);
 	console.log(long);
+	if (num != 1) {
+		var num = response.businesses.length;
+	}
 	for (var i = 0; i < num; i++) {
 		if (response.businesses.length === 0) {
 			$(".cardGroup").append($("<h1>").addClass("text-center warning").css("color", "red").text("Result cannot be found!"));
@@ -49,7 +52,7 @@ function build(response, num) {
 			var rate = response.businesses[i].rating + "/5";
 			var price = response.businesses[i].price;
 			var yelp_url = response.businesses[i].url;
-			var location = response.businesses[i].location.display_address[0]
+			var location = response.businesses[i].location.display_address[0];
 
 			if (price === "$") {
 				price = "Cheap!";
@@ -76,7 +79,6 @@ function build(response, num) {
 			}
 			body.append($("<div>").addClass("card-body").append([text, fav]));
 			$(".cardGroup").append(body);
-			limit += 10;
 		}
 		exist = true;
 	}
@@ -106,7 +108,7 @@ $(document).ready(function() {
 				cate += text[i];
 			}
 		}
-		var url = searchURL + "?term=" + cate + "&latitude=" + lat + "&longitude=" + long + "&sort_by=rating&limit=10&offset=" + limit + "&radius=40000";
+		var url = searchURL + "?term=" + cate + "&latitude=" + lat + "&longitude=" + long + "&sort_by=rating&limit=10&offset=0&radius=40000";
 		$.ajax({
 			url: url,
 			method: "GET",
@@ -128,6 +130,7 @@ $(document).ready(function() {
 
 	// row till end -> get again
 	$(window).scroll(function() {
+		limit += 10;
 		if($(window).scrollTop() + $(window).height() >= $(document).height()-2 && !infav) {
 			var url = searchURL + "?term=" + cate + "&latitude=" + lat + "&longitude=" + long + "&sort_by=rating&limit=10&offset=" + limit + "&radius=40000";
 			$.ajax({
@@ -142,17 +145,38 @@ $(document).ready(function() {
 		}
 	});
 
-	// connect zip code button
-		// use another api to find long and lat
-	$("#zipSearch").on("click", function(event) {
+	// search food type
+		// use term
+	$("#styleSearch").on("click", function(event) {
+		limit = 0;
 		if ($(".warning").length === 1) {
 			$(".warning").remove()
 		}
 		infav = false;
 		end = false;
 		event.preventDefault();
+
 		zip = $(".zipSearch").val();
-		if (zip.match("[0-9]{5}")) {
+		text = $(".styleSearch").val().split(" ");
+
+		if (text != "") {
+			cate = "";
+			for (var i = 0; i < text.length; i++) {
+				text[i] = text[i].charAt(0).toUpperCase() + text[i].substring(1);
+				if (i >= 1) {
+					cate += text[i].charAt(0).toUpperCase() + text[i].slice(1);
+				}
+				else {
+					cate += text[i];
+				}
+			}
+			if (!food.includes(text.join(' '))) {
+				food.push(text.join(' '));
+				$(".categoriesContainer").append($("<button>").addClass("btn btn-info mx-1 mb-2 categoriesButton").attr("type", "button").val(text.join(' ')).text(text.join(' ')));
+			}
+		}
+
+		if (zip != "" && zip.match("[0-9]{5}")) {
 			var mapApi_key = "7KJ9FmGzVmFgAQMe0JY1nsua5PG7EUul";
 			var googleUrl = "https://www.mapquestapi.com/geocoding/v1/address?key=" + mapApi_key + "&location=" + zip;
 			
@@ -166,80 +190,58 @@ $(document).ready(function() {
 			$.when(ajaxcall()).done(function(response) {
 				lat = response.results[0].locations[0].latLng.lat;
 				long = response.results[0].locations[0].latLng.lng;
-				console.log(lat);
-				console.log(long);
 				if (cate != "") {
-					var url = searchURL + "?term=" + cate + "&latitude=" + lat + "&longitude=" + long + "&sort_by=rating&limit=10&offset=" + limit + "&radius=4000";
+					var url = searchURL + "?term=" + cate + "&latitude=" + lat + "&longitude=" + long + "&sort_by=rating&limit=10&offset=0&radius=4000";
 				}
 				else {
-					var url = searchURL + "?latitude=" + lat + "&longitude=" + long + "&sort_by=rating&limit=10&offset=" + limit + "&radius=4000";
+					var url = searchURL + "?latitude=" + lat + "&longitude=" + long + "&sort_by=rating&limit=10&offset=0&radius=4000";
 				}
 				setTimeout(function () {
 					$.ajax({
-						url: url,
-						method: "GET",
-						headers: {
-							'Authorization': 'Bearer ' + token
+					url: url,
+					method: "GET",
+					headers: {
+						'Authorization': 'Bearer ' + token
+					}
+				}).then(function(response) {
+					if ($(".cardGroup").length === 1) {
+						if (exist) {
+							$(".cardGroup").empty();
+							build(response, 10);
 						}
-					}).then(function(response) {
-						if ($(".cardGroup").length === 1) {
-							if (exist) {
-								$(".cardGroup").empty();
-								build(response, 10);
-							}
-							else {
-								build(response, 10);
-							}
+						else {
+							build(response, 10);
 						}
-					});
+					}
+				});
 				}, 300);
 			});
+		} 
+		else {
+			var url = searchURL + "?term=" + cate + "&latitude=" + lat + "&longitude=" + long + "&sort_by=rating&limit=10&offset=0&radius=40000";
+			console.log(url);
+			$.ajax({
+				url: url,
+				method: "GET",
+				headers: {
+					'Authorization': 'Bearer ' + token
+				}
+			}).then(function(response) {
+				console.log(response);
+				if ($(".cardGroup").length === 1) {
+					if (exist) {
+						$(".cardGroup").empty();
+						build(response, 10);
+					}
+					else {
+						build(response, 10);
+					}
+				}
+			});
 		}
-	});
 
-	// search food type
-		// use term
-	$("#styleSearch").on("click", function(event) {
-		if ($(".warning").length === 1) {
-			$(".warning").remove()
-		}
-		infav = false;
-		end = false;
-		event.preventDefault();
-		text = $(".styleSearch").val().split(" ");
-		cate = "";
-		for (var i = 0; i < text.length; i++) {
-			text[i] = text[i].charAt(0).toUpperCase() + text[i].substring(1);
-			if (i >= 1) {
-				cate += text[i].charAt(0).toUpperCase() + text[i].slice(1);
-			}
-			else {
-				cate += text[i];
-			}
-		}
-		if (!food.includes(text.join(' '))) {
-			food.push(text.join(' '));
-			$(".categoriesContainer").append($("<button>").addClass("btn btn-info mx-1 mb-2 categoriesButton").attr("type", "button").val(text.join(' ')).text(text.join(' ')));
-		}
-		var url = searchURL + "?term=" + cate + "&latitude=" + lat + "&longitude=" + long + "&sort_by=rating&limit=10&offset=" + limit + "&radius=40000";
-		$.ajax({
-			url: url,
-			method: "GET",
-			headers: {
-				'Authorization': 'Bearer ' + token
-			}
-		}).then(function(response) {
-			if ($(".cardGroup").length === 1) {
-				if (exist) {
-					$(".cardGroup").empty();
-					build(response, 10);
-				}
-				else {
-					build(response, 10);
-				}
-			}
-		});
 		$(".styleSearch").val("");
+		
 	});
 
 	// add a favorite button?
@@ -331,9 +333,13 @@ $(document).ready(function() {
 
 	$(".clear").on("click", function() {
 		$(".zipSearch").val("");
+		if ($(".warning").length === 1) {
+			$(".warning").remove()
+		}
 		lat = userlat;
 		long = userlong;
-		var url = searchURL + "?term=" + cate + "&latitude=" + lat + "&longitude=" + long + "&sort_by=rating&limit=10&offset=" + limit + "&radius=40000";
+		var url = searchURL + "?term=" + cate + "&latitude=" + lat + "&longitude=" + long + "&sort_by=rating&limit=10&offset=0&radius=40000";
+		console.log(url);
 		$.ajax({
 			url: url,
 			method: "GET",
@@ -341,6 +347,7 @@ $(document).ready(function() {
 				'Authorization': 'Bearer ' + token
 			}
 		}).then(function(response) {
+			console.log(response);
 			if ($(".cardGroup").length === 1) {
 				if (exist) {
 					$(".cardGroup").empty();
